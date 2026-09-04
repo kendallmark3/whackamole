@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
 import { useCountdown } from './hooks/useCountdown'
 import { useMoleSpawner, type DifficultyKey } from './hooks/useMoleSpawner'
+import { useSoundEffects } from './hooks/useSoundEffects'
 import { readHighScore, writeHighScore } from './highScoreStore'
 import { nextScore, isNewHighScore } from './scoring'
 import { GameHeader } from './components/GameHeader'
@@ -29,6 +30,7 @@ function App() {
   }, [score])
 
   const { holes, start: startMoles, stop: stopMoles, clearHole } = useMoleSpawner(difficulty)
+  const { playWhack } = useSoundEffects()
 
   const handleFinish = useCallback(() => {
     setRunning(false)
@@ -57,6 +59,7 @@ function App() {
     if (!holes[i]) return
 
     clearHole(i)
+    playWhack()
     const next = nextScore(score)
     setScore(next)
 
