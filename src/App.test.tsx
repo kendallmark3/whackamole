@@ -2,6 +2,20 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
 
+function getUpHole(): HTMLButtonElement {
+  const upHole = document.querySelector<HTMLButtonElement>('.hole.is-up')
+  if (!upHole) throw new Error('expected an up hole to exist')
+  return upHole
+}
+
+function getDownHole(): HTMLButtonElement {
+  const downHole = [...document.querySelectorAll<HTMLButtonElement>('.hole')].find(
+    (hole) => !hole.classList.contains('is-up'),
+  )
+  if (!downHole) throw new Error('expected a down hole to exist')
+  return downHole
+}
+
 beforeEach(() => {
   localStorage.clear()
   vi.useFakeTimers()
@@ -22,10 +36,7 @@ describe('App', () => {
       vi.advanceTimersByTime(1000)
     })
 
-    const upHole = document.querySelector('.hole.is-up')
-    expect(upHole).not.toBeNull()
-
-    fireEvent.click(upHole)
+    fireEvent.click(getUpHole())
 
     expect(screen.getByTestId('score')).toHaveTextContent('1')
   })
@@ -34,10 +45,7 @@ describe('App', () => {
     render(<App />)
     fireEvent.click(screen.getByText('Start Game'))
 
-    const downHole = [...document.querySelectorAll('.hole')].find(
-      (hole) => !hole.classList.contains('is-up'),
-    )
-    fireEvent.click(downHole)
+    fireEvent.click(getDownHole())
 
     expect(screen.getByTestId('score')).toHaveTextContent('0')
   })
@@ -49,7 +57,7 @@ describe('App', () => {
     act(() => {
       vi.advanceTimersByTime(1000)
     })
-    fireEvent.click(document.querySelector('.hole.is-up'))
+    fireEvent.click(getUpHole())
 
     act(() => {
       vi.advanceTimersByTime(30000)
