@@ -60,13 +60,21 @@ function App() {
 
     clearHole(i)
     playWhack()
-    const next = nextScore(score)
-    setScore(next)
 
-    if (isNewHighScore(next, highScore)) {
-      setHighScore(next)
-      writeHighScore(next)
-    }
+    // Functional updates, not `nextScore(score)` + `setScore(next)`: rapid
+    // consecutive whacks on different holes can fire before React re-renders,
+    // so multiple handleWhackAt calls would otherwise close over the same
+    // stale `score`/`highScore` and each computed the same "next" value —
+    // hits landing but not visibly incrementing the score.
+    setScore((prevScore) => {
+      const next = nextScore(prevScore)
+      setHighScore((prevHighScore) => {
+        if (!isNewHighScore(next, prevHighScore)) return prevHighScore
+        writeHighScore(next)
+        return next
+      })
+      return next
+    })
   }
 
   return (

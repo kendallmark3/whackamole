@@ -41,6 +41,39 @@ describe('App', () => {
     expect(screen.getByTestId('score')).toHaveTextContent('1')
   })
 
+  it('registers every hit when two different moles are whacked in the same event batch', () => {
+    // Real rapid play can land two clicks (on two already-up moles) before
+    // React re-renders between them. A handler that reads `score` from its
+    // closure instead of a functional setState update would compute the
+    // same "next" value for both clicks and silently drop one hit.
+    let toggle = false
+    const randomSpy = vi.spyOn(Math, 'random').mockImplementation(() => {
+      toggle = !toggle
+      return toggle ? 0 : 0.5 // alternates spawn hole index between 0 and 4
+    })
+
+    render(<App />)
+    fireEvent.click(screen.getByText('Start Game'))
+
+    act(() => {
+      // medium ramps after 10 spawns (1000ms apart) to a 650ms pace, while
+      // each mole stays up 700ms — so spawn #11 lands while #10 is still up
+      vi.advanceTimersByTime(10_660)
+    })
+
+    const upHoles = [...document.querySelectorAll<HTMLButtonElement>('.hole.is-up')]
+    expect(upHoles).toHaveLength(2)
+
+    act(() => {
+      fireEvent.click(upHoles[0])
+      fireEvent.click(upHoles[1])
+    })
+
+    expect(screen.getByTestId('score')).toHaveTextContent('2')
+
+    randomSpy.mockRestore()
+  })
+
   it('does not score when whacking a hole with no mole up', () => {
     render(<App />)
     fireEvent.click(screen.getByText('Start Game'))
