@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import './App.css'
 import { useCountdown } from './hooks/useCountdown'
 import { useMoleSpawner, type DifficultyKey } from './hooks/useMoleSpawner'
@@ -24,10 +24,6 @@ function App() {
 
   const scoreRef = useRef(0)
   const startHighScoreRef = useRef(0)
-
-  useEffect(() => {
-    scoreRef.current = score
-  }, [score])
 
   const { holes, start: startMoles, stop: stopMoles, clearHole } = useMoleSpawner(difficulty)
   const { playWhack } = useSoundEffects()
@@ -61,20 +57,20 @@ function App() {
     clearHole(i)
     playWhack()
 
-    // Functional updates, not `nextScore(score)` + `setScore(next)`: rapid
-    // consecutive whacks on different holes can fire before React re-renders,
-    // so multiple handleWhackAt calls would otherwise close over the same
-    // stale `score`/`highScore` and each computed the same "next" value —
-    // hits landing but not visibly incrementing the score.
-    setScore((prevScore) => {
-      const next = nextScore(prevScore)
-      setHighScore((prevHighScore) => {
-        if (!isNewHighScore(next, prevHighScore)) return prevHighScore
-        writeHighScore(next)
-        return next
-      })
-      return next
-    })
+    // scoreRef, not the `score` closure: rapid consecutive whacks on
+    // different holes can fire before React re-renders between them, so
+    // multiple handleWhackAt calls would otherwise read the same stale
+    // `score` and each compute the same "next" value — hits landing but not
+    // visibly incrementing the score. The ref is updated synchronously here,
+    // so each call always builds on the previous one's result, even within
+    // the same render/batch.
+    scoreRef.current = nextScore(scoreRef.current)
+    setScore(scoreRef.current)
+
+    if (isNewHighScore(scoreRef.current, highScore)) {
+      setHighScore(scoreRef.current)
+      writeHighScore(scoreRef.current)
+    }
   }
 
   return (
