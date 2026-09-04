@@ -2,12 +2,18 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const TICK_MS = 1000
 
+export interface UseCountdownResult {
+  secondsLeft: number
+  start: () => void
+  stop: () => void
+}
+
 // Stateful timer logic isolated in a hook: owns its own interval, cleans up on
 // unmount or restart, exposes a small imperative surface instead of leaking a
 // raw interval id into the caller.
-export function useCountdown(startSeconds, onComplete) {
+export function useCountdown(startSeconds: number, onComplete?: () => void): UseCountdownResult {
   const [secondsLeft, setSecondsLeft] = useState(startSeconds)
-  const intervalRef = useRef(null)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const stop = useCallback(() => {
     if (intervalRef.current !== null) {

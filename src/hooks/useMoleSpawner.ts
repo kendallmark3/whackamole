@@ -2,23 +2,44 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const GRID = 9
 
-export const DIFFICULTIES = {
+export type DifficultyKey = 'easy' | 'medium' | 'hard'
+
+export interface DifficultyConfig {
+  label: string
+  /** ms between spawns before the ramp threshold is reached */
+  spawnMs: number
+  /** ms between spawns once the ramp threshold is reached */
+  rampSpawnMs: number
+  /** number of spawns before the faster rampSpawnMs pace kicks in */
+  rampAfterSpawns: number
+  /** how long a mole stays up before it's auto-cleared */
+  upMs: number
+}
+
+export const DIFFICULTIES: Record<DifficultyKey, DifficultyConfig> = {
   easy: { label: 'Easy', spawnMs: 1400, rampSpawnMs: 900, rampAfterSpawns: 8, upMs: 900 },
   medium: { label: 'Medium', spawnMs: 1000, rampSpawnMs: 650, rampAfterSpawns: 10, upMs: 700 },
   hard: { label: 'Hard', spawnMs: 700, rampSpawnMs: 400, rampAfterSpawns: 12, upMs: 500 },
 }
 
-const emptyHoles = () => Array(GRID).fill(false)
+const emptyHoles = (): boolean[] => Array(GRID).fill(false)
+
+export interface UseMoleSpawnerResult {
+  holes: boolean[]
+  start: () => void
+  stop: () => void
+  clearHole: (i: number) => void
+}
 
 // Mole spawn/despawn scheduling, isolated from the component: owns its own
 // timeout refs and clears them on stop/unmount, instead of leaking timers
 // into module-level state.
-export function useMoleSpawner(difficultyKey) {
-  const [holes, setHoles] = useState(emptyHoles)
-  const spawnTimeoutRef = useRef(null)
-  const upTimeoutsRef = useRef(new Set())
+export function useMoleSpawner(difficultyKey: DifficultyKey): UseMoleSpawnerResult {
+  const [holes, setHoles] = useState<boolean[]>(emptyHoles)
+  const spawnTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const upTimeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set())
   const spawnCountRef = useRef(0)
-  const scheduleSpawnRef = useRef(null)
+  const scheduleSpawnRef = useRef<(() => void) | null>(null)
 
   const clearAll = useCallback(() => {
     if (spawnTimeoutRef.current !== null) {
@@ -29,7 +50,7 @@ export function useMoleSpawner(difficultyKey) {
     upTimeoutsRef.current.clear()
   }, [])
 
-  const setHoleUp = useCallback((i, up) => {
+  const setHoleUp = useCallback((i: number, up: boolean) => {
     setHoles((prev) => {
       if (prev[i] === up) return prev
       const next = prev.slice()
@@ -54,7 +75,7 @@ export function useMoleSpawner(difficultyKey) {
       }, config.upMs)
       upTimeoutsRef.current.add(upTimeout)
 
-      scheduleSpawnRef.current()
+      scheduleSpawnRef.current?.()
     }, delay)
   }, [difficultyKey, setHoleUp])
 
@@ -75,7 +96,7 @@ export function useMoleSpawner(difficultyKey) {
   }, [clearAll])
 
   const clearHole = useCallback(
-    (i) => {
+    (i: number) => {
       setHoleUp(i, false)
     },
     [setHoleUp],

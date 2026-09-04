@@ -2,7 +2,7 @@
 
 const KEY = 'wam_high'
 
-export function readHighScore() {
+export function readHighScore(): number {
   try {
     const raw = localStorage.getItem(KEY)
     const parsed = raw ? parseInt(raw, 10) : 0
@@ -12,7 +12,7 @@ export function readHighScore() {
   }
 }
 
-export function writeHighScore(score) {
+export function writeHighScore(score: number): void {
   try {
     localStorage.setItem(KEY, String(score))
   } catch {
