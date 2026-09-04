@@ -1,0 +1,288 @@
+Yeah. This should be the **final Progressive Intent file for Whack-a-Mole** — not “improve it again,” but **evaluate whether the current intent has already been satisfied and explicitly stop if it has**.
+
+# Final Progressive Intent — Definition of Done
+
+## Intent
+
+Evaluate the current Whack-a-Mole repository and determine whether the application has already satisfied its intended feature, engineering, and validation requirements.
+
+The goal of this pass is **not to improve the application further by default**.
+
+The goal is to determine whether the current progressive-intent cycle is complete.
+
+If the repository already satisfies the current intent, success criteria, and quality requirements, declare the work complete and stop.
+
+Do not create additional enhancements merely because they are possible.
+
+---
+
+## Primary Question
+
+**Are we done?**
+
+Determine whether the current repository has reached a sufficient completed state for the intent that produced it.
+
+The answer must be one of:
+
+* **DONE — STOP**
+* **NOT DONE — CONTINUE**
+
+Do not return an ambiguous result.
+
+---
+
+## Current Intended Outcome
+
+The Whack-a-Mole application should be a clean, maintainable, working implementation of the game with:
+
+* correct core gameplay behavior
+* reliable scoring
+* countdown and game-state management
+* high-score persistence
+* appropriate component separation
+* reusable hooks where justified
+* TypeScript where currently intended
+* working sound behavior where implemented
+* appropriate automated tests
+* passing build
+* passing lint
+* passing type checks where configured
+* no known blocking defects
+* no unnecessary architectural complexity
+
+The existing repository is the primary source of truth.
+
+Use the current code, tests, configuration, documentation, and previous intent artifacts to determine what has already been achieved.
+
+---
+
+## Evaluation Rules
+
+Evaluate the repository against the following five gates.
+
+### Gate 1 — Intent Satisfied
+
+Determine whether the application currently delivers the intended Whack-a-Mole feature and behavior.
+
+Confirm that the game performs its intended function without requiring additional feature development.
+
+If the core feature is working as intended, this gate passes.
+
+---
+
+### Gate 2 — Success Criteria Satisfied
+
+Validate the repository using the available engineering evidence.
+
+Where applicable:
+
+* run the build
+* run automated tests
+* run lint
+* run type checking
+* inspect existing validation evidence
+* verify core gameplay behavior
+* verify scoring
+* verify persistence behavior
+* verify game start/stop/countdown behavior
+* verify existing sound behavior if part of the current implementation
+
+Failures introduced by the existing implementation that prevent the intended feature from working are blocking.
+
+Cosmetic or speculative improvements are not blocking.
+
+---
+
+### Gate 3 — No Material Blocking Defects
+
+Identify any remaining issues.
+
+Classify every issue as one of:
+
+* **BLOCKING**
+* **NON-BLOCKING**
+* **FUTURE INTENT**
+
+Only a blocking issue may prevent completion.
+
+A blocking issue must materially prevent:
+
+* correct feature behavior
+* required validation
+* safe execution
+* maintainability sufficient for the current scope
+
+Do not classify optional enhancements as blocking.
+
+---
+
+### Gate 4 — Architecture Is Sufficient
+
+Determine whether the current architecture is appropriate for the size and purpose of this application.
+
+Do not require additional abstractions, services, agents, state libraries, frameworks, infrastructure, observability, or other architectural components unless the current feature cannot be considered complete without them.
+
+The standard is:
+
+**sufficient architecture, not maximum architecture.**
+
+Do not modernize for modernization's sake.
+
+---
+
+### Gate 5 — Remaining Work Requires New Intent
+
+For every improvement that could still be made, ask:
+
+> Is this required to satisfy the current intent?
+
+If the answer is **no**, classify it as:
+
+**FUTURE INTENT**
+
+Examples may include:
+
+* additional animations
+* improved visual polish
+* multiplayer
+* cloud leaderboards
+* analytics
+* additional sound effects
+* mobile packaging
+* accessibility enhancements beyond current requirements
+* performance optimization beyond demonstrated need
+* new game modes
+* casino-style functionality
+* new architectural abstractions
+* broader observability
+* deployment expansion
+
+These may be valuable.
+
+They are not part of the current progressive-intent cycle unless explicitly required by the current intent.
+
+---
+
+# Stop Rule
+
+If all of the following are true:
+
+1. the intended feature works
+2. current success criteria are satisfied
+3. required validation passes
+4. no blocking defects remain
+5. remaining improvements require new intent
+
+then the final result must be:
+
+# DONE — STOP
+
+When this condition is reached:
+
+**Do not modify the repository.**
+
+Do not refactor additional code.
+
+Do not add enhancements.
+
+Do not create new architecture.
+
+Do not implement recommendations.
+
+Do not continue improving the application.
+
+The current progressive-intent cycle is complete.
+
+---
+
+## Cost Boundary
+
+Treat continuation as a new engineering investment.
+
+Every additional progressive cycle has cost:
+
+* model usage
+* developer review
+* testing
+* regression risk
+* maintenance
+* architectural complexity
+* opportunity cost
+
+Therefore, additional work must not begin merely because improvement is possible.
+
+Additional work requires **new explicit intent**.
+
+The current intent does not authorize unlimited continuation.
+
+---
+
+# Required Final Report
+
+Return the following report.
+
+## Progressive Intent Completion Report
+
+### Decision
+
+**DONE — STOP**
+
+or
+
+**NOT DONE — CONTINUE**
+
+### Original Intent Status
+
+State whether the intended application behavior has been achieved.
+
+### Validation Evidence
+
+Report the results of:
+
+* build
+* tests
+* lint
+* type checking
+* relevant behavioral verification
+
+### Blocking Issues
+
+List only issues that genuinely prevent completion.
+
+If none exist, state:
+
+**None.**
+
+### Non-Blocking Issues
+
+List minor known issues that do not prevent completion.
+
+### Future Intents
+
+List worthwhile improvements that are outside the current intent.
+
+Do not implement them.
+
+### Stop Justification
+
+Explain why the repository should stop at its current state or why another corrective pass is required.
+
+---
+
+# Final Principle
+
+A repository is not unfinished simply because it can still be improved.
+
+A progressive-intent cycle is complete when its intended outcome has been achieved and further improvement requires a new decision.
+
+**Intent → Build → Validate → Stop**
+
+If additional value is desired:
+
+**New Intent → New Progressive Cycle**
+
+Do not continue without new intent.
+
+This is the one I’d actually run against the Mole repo.
+
+The key test is whether the runner has enough discipline to come back with **“DONE — STOP” and make zero code changes**. If it does, you’ve proven something bigger than progressive improvement: you’ve proven **progressive restraint**.
