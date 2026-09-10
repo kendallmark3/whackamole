@@ -17,9 +17,9 @@ export interface DifficultyConfig {
 }
 
 export const DIFFICULTIES: Record<DifficultyKey, DifficultyConfig> = {
-  easy: { label: 'Easy', spawnMs: 1400, rampSpawnMs: 900, rampAfterSpawns: 8, upMs: 900 },
-  medium: { label: 'Medium', spawnMs: 1000, rampSpawnMs: 650, rampAfterSpawns: 10, upMs: 700 },
-  hard: { label: 'Hard', spawnMs: 700, rampSpawnMs: 400, rampAfterSpawns: 12, upMs: 500 },
+  easy: { label: 'Easy', spawnMs: 1400, rampSpawnMs: 900, rampAfterSpawns: 8, upMs: 1400 },
+  medium: { label: 'Medium', spawnMs: 1000, rampSpawnMs: 650, rampAfterSpawns: 10, upMs: 1000 },
+  hard: { label: 'Hard', spawnMs: 700, rampSpawnMs: 400, rampAfterSpawns: 12, upMs: 700 },
 }
 
 const emptyHoles = (): boolean[] => Array(GRID).fill(false)
