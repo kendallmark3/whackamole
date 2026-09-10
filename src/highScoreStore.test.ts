@@ -20,6 +20,16 @@ describe('readHighScore', () => {
     expect(readHighScore()).toBe(0)
   })
 
+  it('falls back to 0 for a negative value', () => {
+    localStorage.setItem('wam_high', '-5')
+    expect(readHighScore()).toBe(0)
+  })
+
+  it('falls back to 0 for a value with trailing garbage', () => {
+    localStorage.setItem('wam_high', '5abc')
+    expect(readHighScore()).toBe(0)
+  })
+
   it('falls back to 0 when localStorage throws', () => {
     const spy = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('disabled')

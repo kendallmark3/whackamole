@@ -5,8 +5,9 @@ const KEY = 'wam_high'
 export function readHighScore(): number {
   try {
     const raw = localStorage.getItem(KEY)
-    const parsed = raw ? parseInt(raw, 10) : 0
-    return Number.isFinite(parsed) ? parsed : 0
+    if (raw === null || !/^\d+$/.test(raw)) return 0
+    const parsed = parseInt(raw, 10)
+    return Number.isSafeInteger(parsed) ? parsed : 0
   } catch {
     return 0
   }
